@@ -1,0 +1,139 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    background-image: url(../assets/bg-image.jpg);
+    background-size: cover;
+    height: 720px;
+    width: 520px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    overflow: hidden;
+}
+
+.header {
+    width: 520px;
+    display: flex;
+    justify-content: center;
+}
+
+.header img {
+    width: 400px;
+}
+
+.container {
+    padding: 0px 10px;
+}
+
+.container-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.body {
+    background-color: white;
+    border-radius: 4px;
+    width: 400px;
+    height: 300px;
+    margin-bottom: 10px;
+    overflow: auto;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.container-footer {
+    align-items: center;
+    justify-content: center;
+}
+
+.footer {
+    padding: 10px 50px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.center-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.center-button button {
+    width: 200px;
+}
+
+.btn {
+    cursor: pointer;
+    height: 50px;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+}
+
+.btn-primary {
+    color: white;
+    font-weight: bold;
+    background-color: #58B19F;
+}
+
+.btn-secondary {
+    font-weight: bold;
+    color: white;
+    background-color: #82589F;
+}
+
+.btn:active {
+    opacity: .7;
+}
+
+.title {
+    font-weight: 900;
+    font-size: 16px;
+}
+
+.container-detail {
+    /* display: flex;
+    justify-content: space-between; */
+    font-size: 13px;
+}
+
+.progress-bar {
+    height: 20px;
+    width: 100%;
+    background-color: #58B19F;
+}
+
+#update {
+    overflow: auto;
+    height: 245px;
+}
+
+.container-progress {
+    width: 100%;
+    /* display: flex; */
+    /* justify-content: center; */
+}
+
+.container-percent {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 400px;
+}
+
+#txtPercent {
+    color: #82589F;
+}
+
+.btn-disabled {
+    background-color: gray !important;
+    color: #000 !important;
+}
+
+.btn-disabled:active {
+    opacity: 1 !important;
+}

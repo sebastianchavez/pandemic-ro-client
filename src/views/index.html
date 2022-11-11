@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PandemicRO</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="../assets/title.png" alt="">
+        </div>
+        <div class="container-body">
+            <div class="body">
+                <div class="container-detail">
+                    <label id="txtTitle" class="title">PandemicRo v. 1.0.0</label>
+                    <!-- <div class="loading" id="loadingListResult"></div> -->
+                    <div id="update">
+                        <label id="txtTitleUpdate" for=""></label>
+                        <div id="contentUpdate"> </div>
+                    </div>
+                    <div class="detail" id="loadingListDetail">Descargando actualización...</div>
+                </div>
+                <div class="container-progress">
+                    <div class="container-percent">
+                        <label id="txtPercent"></label>
+                    </div>
+                    <div class="progress-bar" id="progress"></div>
+                </div>
+            </div>
+        </div>
+        <div class="container-footer">
+            <div class="footer">
+                <button class="btn btn-primary btn-disabled" id="btnPlay" onclick="openGame()" disabled>
+                    Jugar
+                </button>
+                <button class="btn btn-secondary" onclick="goToRegister()">
+                    Registrar cuenta
+                </button>
+            </div>
+        </div>
+        <div class="center-button">
+            <button class="btn btn-secondary" onclick="exitApp()">
+                Salir
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron')
+
+        let btnLoad = false
+
+        ipcRenderer.on('getInfo:ok', async (e, res) => {
+            console.log('getInfo:ok', res)
+            let div = document.getElementById('loadingListDetail')
+            let txtTitle = document.getElementById('txtTitle')
+            let contentUpdate = document.getElementById('contentUpdate')
+            let txtTitleUpdate = document.getElementById('txtTitleUpdate')
+            txtTitle.innerHTML = `PandemicRo v. ${res && res.response && res.response.client && res.response.client.version ? res.response.client.version : '1.0.0'}`
+            if ((res.version && res.response && res.response.client && res.response.client.version && res.response.client.version == res.version) || (res.response && !res.response.client) || !res.response) {
+                div.innerHTML = 'Sin actualizaciones pendientes'
+                let btn = document.getElementById('btnPlay')
+                btn.removeAttribute('disabled')
+                btn.classList.remove('btn-disabled')
+                btnLoad = true
+                console.log('btn:', btnLoad)
+            } else {
+                txtTitleUpdate.innerHTML = 'Esta versión contiene:'
+                contentUpdate.innerHTML = `
+                    <ul>
+                        ${res.response.client.updates.map(x => {
+                    return '<li>' + x.description + '</li>'
+                }).toString().split(',').join('')
+                    }
+                    </ul>
+                `
+                div.innerHTML = 'Descargando actualización...'
+                for await (let f of res.response.client.clientFiles) {
+                    ipcRenderer.send("download", {
+                        url: f.idFile.url,
+                        name: f.idFile.name,
+                        properties: {
+                            directory: "~/",
+                        }
+                    })
+                }
+            }
+
+        })
+
+        ipcRenderer.on('callback', (e, res) => {
+            console.log('callback:', res)
+        })
+
+        ipcRenderer.on('path', (e, res) => {
+            console.log('path:', res)
+        })
+
+        ipcRenderer.on("download complete", (event, file) => {
+            let div = document.getElementById('loadingListDetail')
+            div.innerHTML = div.innerHTML.replace('Actualizando...', 'OK');
+            console.log('download complete:', file); // Full file path
+            let txtPercent = document.getElementById('txtPercent')
+            txtPercent.innerHTML = 100 + '%'
+        });
+
+        ipcRenderer.on("progress", (event, progress) => {
+            let percent = Math.round(progress.percent * 100);
+            let div = document.getElementById('progress')
+            div.style.width = percent + '%'
+            let txtPercent = document.getElementById('txtPercent')
+            txtPercent.innerHTML = percent + '%'
+        });
+
+        ipcRenderer.on("extractprogress", (event, progress) => {
+            let div = document.getElementById('loadingListDetail')
+            div.innerHTML = 'Descomprimiendo...'
+            console.log('extractprogress:', progress)
+            // let div2 = document.getElementById('progress')
+            // div2.style.width = percent + '%'
+
+        });
+
+        ipcRenderer.on("extract", (event, log) => {
+            let div = document.getElementById('loadingListDetail')
+            div.innerHTML = 'Completado!'
+            let btn = document.getElementById('btnPlay')
+            btn.removeAttribute('disabled')
+            btn.classList.remove('btn-disabled')
+            btnLoad = true
+            // console.log('extract:', log); // Full file path
+        });
+
+        ipcRenderer.on("error progress", (event, error) => {
+            console.log('error progress:', error); // Full file path
+        });
+
+        ipcRenderer.on("check", (event, check) => {
+            console.log('check:', check); // Full file path
+            getInfoClient()
+        });
+
+        ipcRenderer.on("error check", (event, error) => {
+            console.log('error check:', error); // Full file path
+        });
+
+        function exitApp() {
+            ipcRenderer.send('exit')
+        }
+
+        function goToRegister() {
+            ipcRenderer.send('goToRegister')
+        }
+
+        function openGame() {
+            console.log('btn:', btnLoad)
+            if (!btnLoad) {
+                //TODO: Mostrar mensaje de que falta actualizar
+            } else {
+                ipcRenderer.send('openGame')
+            }
+        }
+
+        function getInfoClient() {
+            ipcRenderer.send('getInfo')
+        }
+
+        function checkVersion() {
+            ipcRenderer.send('checkVersion')
+        }
+
+        checkVersion()
+
+    </script>
+
+</body>
+
+</html>
