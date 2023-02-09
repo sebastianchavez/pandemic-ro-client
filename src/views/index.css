@@ -26,34 +26,20 @@ body {
 }
 
 .container-body {
+    padding-left: 30px;
+    width: 1000px;
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.body {
-    background-color: white;
-    border-radius: 4px;
-    width: 400px;
-    height: 300px;
-    margin-bottom: 10px;
-    overflow: auto;
-    padding: 4px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    height: 400px;
 }
 
 .container-footer {
-    align-items: center;
-    justify-content: center;
+    padding-left: 30px;
+    width: 1000px;
 }
 
 .footer {
-    padding: 10px 50px;
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(2, 1fr);
+   display: flex;
 }
 
 .center-button {
@@ -86,8 +72,12 @@ body {
     background-color: #82589F;
 }
 
+.btn-secondary:active {
+    background-color: #D6A2E8;
+}
+
 .btn:active {
-    opacity: .7;
+    /* opacity: .7; */
 }
 
 .title {
@@ -99,12 +89,6 @@ body {
     /* display: flex;
     justify-content: space-between; */
     font-size: 13px;
-}
-
-.progress-bar {
-    height: 20px;
-    width: 100%;
-    background-color: #58B19F;
 }
 
 #update {
@@ -136,4 +120,182 @@ body {
 
 .btn-disabled:active {
     opacity: 1 !important;
+}
+
+.icon-menu{
+    width: 30px;
+    height: 30px;
+}
+
+.btn-menu-right{
+    outline: none;
+    border: none;
+    height: 50px;
+    width: 50px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.btn-menu-left{
+    height: 50px;
+    outline: none;
+    border: none;
+    color: white;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}
+
+.btn-menu-left:active {
+    /* opacity: .7; */
+}
+
+.btn-menu-right:active {
+    /* opacity: .7; */
+}
+
+.btn-game{
+    width: 200px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.card-info{
+    margin-top: 30px;
+    width: 650px;
+    height: 120px;
+}
+
+.card-info-header{
+    background-color: rgba(0, 0, 0, .8);
+    width: 650px;
+    height: 40px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.menu-active {
+    color:#58B19F;
+}
+
+.card-info-body{
+    background-color: rgba(0, 0, 0, .5);
+    width: 650px;
+    height: 80px;
+}
+
+.container-image{
+    width: 400px;
+}
+
+.slider-image {
+    width: 380px; 
+    height: 180px;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+}
+
+.menu {
+    width: 130px;
+    color: white;
+    text-align: right;
+    display: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.container-btn-game{
+
+}
+
+.view-menu {
+    transition: all ease 1s;
+    display: block;
+}
+
+.item-menu{
+    color: white;
+    padding: 10px;
+    width: 150px;
+    outline: none;
+    border: none;
+    height: 40px;
+    background-color: #82589F;
+}
+
+.item-menu:active{
+    background-color: #D6A2E8;
+}
+
+.container-update{
+    height: 400px;
+    padding-top: 50px;
+    display: flex;
+    align-items: center;
+    padding-top: 100px;
+    flex-direction: column;
+}
+
+.title {
+    margin-bottom: 50px;
+}
+
+.title label {
+    font-size: 35px;
+    color: #6D214F;
+    font-style: italic;
+}
+
+.progress-bar{
+    background-color: #D9D9D9;
+    width: 450px;
+    height: 6px;
+    border-radius: 4px;
+}
+
+.side-menu {
+    display: block;
+    position: absolute;
+    background-color: #000;
+    opacity: .5;
+    right: 0px;
+    top: 0px;
+    width: 70px;
+    height: 650px;
+}
+
+.container-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 625px;
+}
+
+.container-icons img {
+    width: 40px;
+    height: 40px;
+}
+
+.container-progress{
+    display: flex;
+    flex-direction: column;
+    font-style: italic;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.info{
+    width: 550px;
+    height: 40px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    padding-left: 30px;
+    padding-right: 50px;
 }

@@ -12,42 +12,71 @@
 <body>
 
     <div class="container">
-        <div class="header">
-            <img src="../assets/title.png" alt="">
-        </div>
         <div class="container-body">
-            <div class="body">
-                <div class="container-detail">
-                    <label id="txtTitle" class="title">PandemicRo v. 1.0.0</label>
-                    <!-- <div class="loading" id="loadingListResult"></div> -->
-                    <div id="update">
-                        <label id="txtTitleUpdate" for=""></label>
-                        <div id="contentUpdate"> </div>
-                    </div>
-                    <div class="detail" id="loadingListDetail">Descargando actualización...</div>
+            <div class="container-image">
+                <div class="slider-image" style="background-image: url('../assets/_bg-image.jpg'); ">
+                </div>
+            </div>
+            <div class="container-update">
+                <div class="title">
+                    <label>PandemicRo</label>
                 </div>
                 <div class="container-progress">
-                    <div class="container-percent">
-                        <label id="txtPercent"></label>
-                    </div>
-                    <div class="progress-bar" id="progress"></div>
+                    <label>Actualización</label>
+                    <div class="progress-bar"></div>
+                    <label>66%</label>
                 </div>
             </div>
         </div>
         <div class="container-footer">
             <div class="footer">
-                <button class="btn btn-primary btn-disabled" id="btnPlay" onclick="openGame()" disabled>
-                    Jugar
-                </button>
-                <button class="btn btn-secondary" onclick="goToRegister()">
-                    Registrar cuenta
-                </button>
+                <div class="container-btn-game">
+                    <div class="btn-game">
+                        <button class="btn-menu-left btn-secondary" id="btnPlay" onclick="openGame()" >
+                            Jugar
+                        </button>
+                        <button class="btn-menu-right btn-secondary" onclick="changeStateMenu()" id="btnMenu">
+                            <img class="icon-menu" src="../assets/menu.svg" alt="">
+                        </button>
+                    </div>
+                    <div id="menu" class="menu">
+                            <button class="item-menu">
+                                Registrarse
+                            </button>
+                            <button class="item-menu">
+                                Configuraciones
+                            </button>
+                            <button class="item-menu">
+                                Salir
+                            </button>
+                        </div>
+                </div>
+               
+                <div class="card-info">
+                    <div class="card-info-header">
+                        <label class="menu-active">Eventos</label>
+                        <label >Noticias</label>
+                        <label >Estado</label>
+                    </div>
+                    <div class="card-info-body">
+                        <div class="info">
+                            <label>Evento invasión de porings en ciudades</label>
+                            <label>20/12</label>
+                        </div>
+                        <div class="info">
+                            <label>Evento invasión MVP’s</label>
+                            <label>20/12</label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="center-button">
-            <button class="btn btn-secondary" onclick="exitApp()">
-                Salir
-            </button>
+        <div class="side-menu">
+            <div class="container-icons">
+                <img src="../assets/icons/logo-discord.svg" alt="" onclick="openDiscord()">
+                <img src="../assets/icons/logo-facebook.svg" alt="" onclick="openFacebook()">
+                <img src="../assets/icons/logo-instagram.svg" alt="" onclick="openInstagran()">
+            </div>
         </div>
     </div>
 
@@ -55,42 +84,44 @@
         const { ipcRenderer } = require('electron')
 
         let btnLoad = false
+        let btnPlay = document.getElementById('btnPlay')
+        let btnMenu = document.getElementById('btnMenu')
 
         ipcRenderer.on('getInfo:ok', async (e, res) => {
             console.log('getInfo:ok', res)
             let div = document.getElementById('loadingListDetail')
-            let txtTitle = document.getElementById('txtTitle')
-            let contentUpdate = document.getElementById('contentUpdate')
-            let txtTitleUpdate = document.getElementById('txtTitleUpdate')
-            txtTitle.innerHTML = `PandemicRo v. ${res && res.response && res.response.client && res.response.client.version ? res.response.client.version : '1.0.0'}`
-            if ((res.version && res.response && res.response.client && res.response.client.version && res.response.client.version == res.version) || (res.response && !res.response.client) || !res.response) {
-                div.innerHTML = 'Sin actualizaciones pendientes'
-                let btn = document.getElementById('btnPlay')
-                btn.removeAttribute('disabled')
-                btn.classList.remove('btn-disabled')
-                btnLoad = true
-                console.log('btn:', btnLoad)
-            } else {
-                txtTitleUpdate.innerHTML = 'Esta versión contiene:'
-                contentUpdate.innerHTML = `
-                    <ul>
-                        ${res.response.client.updates.map(x => {
-                    return '<li>' + x.description + '</li>'
-                }).toString().split(',').join('')
-                    }
-                    </ul>
-                `
-                div.innerHTML = 'Descargando actualización...'
-                for await (let f of res.response.client.clientFiles) {
-                    ipcRenderer.send("download", {
-                        url: f.idFile.url,
-                        name: f.idFile.name,
-                        properties: {
-                            directory: "~/",
-                        }
-                    })
-                }
-            }
+            // let txtTitle = document.getElementById('txtTitle')
+            // let contentUpdate = document.getElementById('contentUpdate')
+            // let txtTitleUpdate = document.getElementById('txtTitleUpdate')
+            // txtTitle.innerHTML = `PandemicRo v. ${res && res.response && res.response.client && res.response.client.version ? res.response.client.version : '1.0.0'}`
+            // if ((res.version && res.response && res.response.client && res.response.client.version && res.response.client.version == res.version) || (res.response && !res.response.client) || !res.response) {
+            //     div.innerHTML = 'Sin actualizaciones pendientes'
+            //     let btn = document.getElementById('btnPlay')
+            //     btn.removeAttribute('disabled')
+            //     btn.classList.remove('btn-disabled')
+            //     btnLoad = true
+            //     console.log('btn:', btnLoad)
+            // } else {
+            //     txtTitleUpdate.innerHTML = 'Esta versión contiene:'
+            //     contentUpdate.innerHTML = `
+            //         <ul>
+            //             ${res.response.client.updates.map(x => {
+            //         return '<li>' + x.description + '</li>'
+            //     }).toString().split(',').join('')
+            //         }
+            //         </ul>
+            //     `
+            //     div.innerHTML = 'Descargando actualización...'
+            //     for await (let f of res.response.client.clientFiles) {
+            //         ipcRenderer.send("download", {
+            //             url: f.idFile.url,
+            //             name: f.idFile.name,
+            //             properties: {
+            //                 directory: "~/",
+            //             }
+            //         })
+            //     }
+            // }
 
         })
 
@@ -98,8 +129,22 @@
             console.log('callback:', res)
         })
 
+        ipcRenderer.on('error', (e, res) => {
+            console.log('error:', res)
+        })
+
         ipcRenderer.on('path', (e, res) => {
             console.log('path:', res)
+        })
+
+        ipcRenderer.on('loading', (e, res) => {
+            btnPlay.setAttribute('disabled', 'disabled')
+            btnMenu.setAttribute('disabled', 'disabled')
+        })
+
+        ipcRenderer.on('loading complete', (e, res) => {
+            btnPlay.removeAttribute('disabled')
+            btnMenu.removeAttribute('disabled')
         })
 
         ipcRenderer.on("download complete", (event, file) => {
@@ -160,11 +205,12 @@
 
         function openGame() {
             console.log('btn:', btnLoad)
-            if (!btnLoad) {
-                //TODO: Mostrar mensaje de que falta actualizar
-            } else {
-                ipcRenderer.send('openGame')
-            }
+            ipcRenderer.send('openGame')
+            // if (!btnLoad) {
+            //     //TODO: Mostrar mensaje de que falta actualizar
+            // } else {
+            //     ipcRenderer.send('openGame')
+            // }
         }
 
         function getInfoClient() {
@@ -175,7 +221,40 @@
             ipcRenderer.send('checkVersion')
         }
 
+        function changeStateMenu(){
+            let menu = document.getElementById('menu')
+            if(menu.classList.contains('view-menu')){
+                menu.classList.remove('view-menu')
+            } else {
+                menu.classList.add('view-menu')                
+            }
+            
+        }
+
+        function openDiscord(){
+            ipcRenderer.send('goToDiscord')
+        }
+
+        function openFacebook(){
+            ipcRenderer.send('goToFacebook')
+        }
+
+        function openInstagran(){
+            ipcRenderer.send('goToInstagram')
+        }
+
+        function generateFileProcess(process){
+            let componentFile = document.createElement('a');
+            componentFile.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(process));
+            componentFile.setAttribute('download', `procesos.txt`);
+            componentFile.style.display = 'none';
+            document.body.appendChild(componentFile);
+            componentFile.click();
+            document.body.removeChild(componentFile);
+        }
+
         checkVersion()
+        
 
     </script>
 
