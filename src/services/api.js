@@ -26,7 +26,7 @@ module.exports = {
     },
     getProcessLocks: () => {
         return new Promise(async (resolve, reject) => {
-            fetch(`${API_URL}/api/process-lock/get-process-lock?page=1&limit=0`, {
+            fetch(`${API_URL}/api/process-lock/get-processes-locks?page=1&limit=0`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             }).then(res => res.json())

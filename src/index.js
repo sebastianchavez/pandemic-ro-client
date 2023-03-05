@@ -1,5 +1,4 @@
 const { app, BrowserWindow, Menu, ipcMain, shell, remote, dialog } = require('electron')
-const { exec } = require('node:child_process');
 const url = require('url')
 const path = require('path')
 const api = require('./services/api')
@@ -12,6 +11,9 @@ const dialogApp = dialog
 const constants = require('./config/constants')
 const { alert } = require('./services/alert')
 const { getLocalProcesses, killProcess } = require('./services/process')
+
+const socketService = require('./services/socket')
+
 
 if (require('electron-squirrel-startup')) return;
 
@@ -127,7 +129,8 @@ ipcMain.on('getInfo', async (e, res) => {
         await getCurrentDevice()
         await getIpInfo()
         const response = await api.getInfo()
-        processLocks = await api.getProcessLocks()
+        const responseProcessLocks = await api.getProcessLocks()
+        processLocks = responseProcessLocks.processLocks
         setInterval(async() => {
             await getProcess()
             let instances = processes.filter(p => p.name.toLowerCase().includes('pandemicro'))
@@ -137,28 +140,29 @@ ipcMain.on('getInfo', async (e, res) => {
         }, 10000);
         mainWindow.webContents.send('getInfo:ok', { response, version, processLocks })
     } catch (error) {
+        console.log('ERROR:', error);
         mainWindow.webContents.send('getInfo:ok', error)
     }
 })
 
 ipcMain.on('goToRegister', (e, res) => {
     e.preventDefault();
-    require('electron').shell.openPath(constants.REGISTER_URL);
+    shell.openPath(constants.REGISTER_URL);
 })
 
 ipcMain.on('goToDiscord', (e, res) => {
     e.preventDefault();
-    require('electron').shell.openPath(constants.DISCORD_URL);
+    shell.openPath(constants.DISCORD_URL);
 })
 
 ipcMain.on('goToFacebook', (e, res) => {
     e.preventDefault(); 
-    require('electron').shell.openPath(constants.FB_URL);
+    shell.openPath(constants.FB_URL);
 })
 
 ipcMain.on('goToInstagram', (e, res) => {
     e.preventDefault();
-    require('electron').shell.openPath(constants.INSTAGRAM_URL);
+    shell.openPath(constants.INSTAGRAM_URL);
 })
 
 ipcMain.on('checkVersion', (e, res) => {
@@ -234,7 +238,7 @@ const checkProcess = async () => {
             let index = 0
             for await(let t of typeValidation){
                 if(t == NAME){
-                        let processIsLock = processes.find(x => x.name.includes(value[index]))
+                        let processIsLock = processes.find(x => x.name.toLowerCase().includes(value[index].toLowerCase()))
                         if(processIsLock){
                             isKill = true
                         }
@@ -242,7 +246,6 @@ const checkProcess = async () => {
                     index++
                 }
             } else {
-                console.log('AQUI!', {typeValidation, value});
                 let indexSize
                 let indexType
                 typeValidation.forEach((x, i) => {
@@ -253,10 +256,8 @@ const checkProcess = async () => {
                     }
                 })
 
-
                 await Promise.all(processes.map(x => {
-                    console.log('X:',x)
-                    if(x.type.toLowerCase() == value[indexType].toLowerCase() && validateRangeSize(parseFloat(x.size.split('.').join('')), parseFloat(value[indexSize]))){
+                    if(x.type.toLowerCase() == value[indexType].toLowerCase() && validateRangeSize(parseFloat(x.size.split('.').join('')), parseFloat(value[indexSize]), p.range, x.name)){
                         isKill = true
                     }
                 }))                
@@ -278,10 +279,11 @@ const checkProcess = async () => {
     }, 1000);
 }
 
-const validateRangeSize = (size, sizeLock) => {
-    const range = Math.round((size*constants.PERCENT_RANGE_SIZE)/100)
-    if((size + range) > sizeLock && (size - range) < sizeLock){
-        console.log('validateRangeSize:', {size, sizeLock, range});
+const validateRangeSize = (size, sizeLock, range, name) => {
+    // range 100% = 10000
+    const newRange = Math.round((size*range)/10000)
+    if((size + newRange) > sizeLock && (size - newRange) < sizeLock){
+        console.log('validateRangeSize 1:', {size, sizeLock, newRange, name});
         return true
     } else {
         return false
@@ -292,6 +294,7 @@ const getProcess = async () => {
     processes = []
     try {
         processes = await getLocalProcesses()
+        console.log('processes:',processes);
         // generateFileProcess(processes)
     } catch (error) {
         console.log('getProcess - ERROR:', error)
@@ -391,7 +394,8 @@ const getIpInfo = async () => {
 const updateDevice = async () => {
     try {
         console.log('device:', device);
-        await api.updateDevice(device)
+        socketService.sendDataIsConnected(device)
+        // await api.updateDevice(device)
     } catch (error) {
         console.log('ERROR:', error);
     }
